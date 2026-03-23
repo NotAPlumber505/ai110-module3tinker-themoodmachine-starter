@@ -50,6 +50,13 @@ SAMPLE_POSTS = [
     "This is fine",
     "So excited for the weekend",
     "I am not happy about this",
+    "Lowkey proud I finished my project, but I am exhausted 🥲",
+    "No cap, that playlist is fire 😂",
+    "Sure, I absolutely love getting stuck in traffic for an hour",
+    "I guess it could be worse, just feeling meh today",
+    "Highkey nervous for tomorrow, but kinda excited too",
+    "LOL my coffee spilled on my notes 💀 great start",
+    "We just got free snacks at work :) small win",
 ]
 
 # Human labels for each post above.
@@ -65,6 +72,13 @@ TRUE_LABELS = [
     "neutral",   # "This is fine"
     "positive",  # "So excited for the weekend"
     "negative",  # "I am not happy about this"
+    "mixed",     # "Lowkey proud I finished my project, but I am exhausted 🥲"
+    "positive",  # "No cap, that playlist is fire 😂"
+    "negative",  # "Sure, I absolutely love getting stuck in traffic for an hour"
+    "neutral",   # "I guess it could be worse, just feeling meh today"
+    "mixed",     # "Highkey nervous for tomorrow, but kinda excited too"
+    "negative",  # "LOL my coffee spilled on my notes 💀 great start"
+    "positive",  # "We just got free snacks at work :) small win"
 ]
 
 # TODO: Add 5-10 more posts and labels.

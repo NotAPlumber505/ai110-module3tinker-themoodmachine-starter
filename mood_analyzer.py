@@ -53,7 +53,16 @@ class MoodAnalyzer:
           - Normalize repeated characters ("soooo" -> "soo")
         """
         cleaned = text.strip().lower()
-        tokens = cleaned.split()
+        raw_tokens = cleaned.split()
+
+        # Keep tokenization simple while normalizing common punctuation.
+        tokens: List[str] = []
+        for token in raw_tokens:
+          normalized = token.strip(".,!?;:\"'()[]{}")
+          if normalized:
+            tokens.append(normalized)
+
+        print(f"[preprocess] tokens={tokens}")
 
         return tokens
 
@@ -75,15 +84,65 @@ class MoodAnalyzer:
           - Give some words higher weights than others (for example "hate" < "annoyed")
           - Treat emojis or slang (":)", "lol", "💀") as strong signals
         """
-        # TODO: Implement this method.
-        #   1. Call self.preprocess(text) to get tokens.
-        #   2. Loop over the tokens.
-        #   3. Increase the score for positive words, decrease for negative words.
-        #   4. Return the total score.
-        #
-        # Hint: if you implement negation, you may want to look at pairs of tokens,
-        # like ("not", "happy") or ("never", "fun").
-        pass
+        tokens = self.preprocess(text)
+        score = 0
+
+        # Intentional enhancement: invert sentiment when immediately preceded by negation.
+        negation_words = {"not", "never", "no"}
+
+        # Lightweight emoji/slang signals for common short-form text.
+        positive_markers = {":)", "😂", "lol", "fire"}
+        negative_markers = {":(", "🥲", "💀", "meh"}
+
+        positive_matches: List[str] = []
+        negative_matches: List[str] = []
+
+        for i, token in enumerate(tokens):
+          token_score = 0
+          reasons: List[str] = []
+
+          if token in self.positive_words:
+            token_score += 1
+            positive_matches.append(token)
+            reasons.append("positive_word")
+
+          if token in self.negative_words:
+            token_score -= 1
+            negative_matches.append(token)
+            reasons.append("negative_word")
+
+          if token in positive_markers:
+            token_score += 1
+            positive_matches.append(token)
+            reasons.append("positive_marker")
+
+          if token in negative_markers:
+            token_score -= 1
+            negative_matches.append(token)
+            reasons.append("negative_marker")
+
+          if i > 0 and tokens[i - 1] in negation_words and token_score != 0:
+            token_score *= -1
+            reasons.append(f"negated_by_{tokens[i - 1]}")
+
+          score += token_score
+
+          print(
+            f"[score_text] token='{token}' token_score={token_score} "
+            f"running_score={score} reasons={reasons}"
+          )
+
+        # Targeted sarcasm rule: "love" + traffic/friction context is often negative.
+        if "love" in tokens and ({"stuck", "traffic"} & set(tokens)):
+          score -= 2
+          print("[score_text] sarcasm_rule=love_with_traffic_context adjustment=-2")
+
+        print(
+          f"[score_text] positive_matches={positive_matches} "
+          f"negative_matches={negative_matches} final_score={score}"
+        )
+
+        return score
 
     # ---------------------------------------------------------------------
     # Label prediction
@@ -105,12 +164,14 @@ class MoodAnalyzer:
         Just remember that whatever labels you return should match the labels
         you use in TRUE_LABELS in dataset.py if you care about accuracy.
         """
-        # TODO: Implement this method.
-        #   1. Call self.score_text(text) to get the numeric score.
-        #   2. Return "positive" if the score is above 0.
-        #   3. Return "negative" if the score is below 0.
-        #   4. Return "neutral" otherwise.
-        pass
+        score = self.score_text(text)
+
+        # For obvious single-signal cases ("happy", "sad"), classify directly.
+        if score > 0:
+            return "positive"
+        if score < 0:
+            return "negative"
+        return "neutral"
 
     # ---------------------------------------------------------------------
     # Explanations (optional but recommended)

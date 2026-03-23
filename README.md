@@ -65,3 +65,11 @@ During this lab you will:
 - When debugging, print tokens, scores, or intermediate choices.
 - Ask an AI assistant to help create edge case posts or unusual wording.
 - Try examples that mislead or confuse your model. Failure cases teach you the most.
+
+---
+
+## Instructor Summary
+
+The core concept students needed to understand is that a rule-based classifier is just explicit logic: text is preprocessed into tokens, tokens affect a numeric score, and that score maps to a label. Students are most likely to struggle when model behavior feels "wrong" but they cannot see intermediate steps, so printing tokens, per-token contributions, and final scores is critical. Another common challenge is threshold design, because a small mapping choice can make obvious examples look neutral or mixed even when scoring is reasonable. AI was helpful for rapidly generating edge cases, spotting implementation bugs (like incomplete methods or indentation mistakes), and proposing focused experiments to test one hypothesis at a time. AI was also potentially misleading when suggestions looked plausible but overfit a narrow case or introduced brittle heuristics without validation. I would guide a student by asking them to run a tiny set of targeted test sentences, inspect which tokens were counted or ignored, and explain the prediction path before changing any code. Then I would ask them to make one small intentional change, re-run the same tests, and compare what improved versus what regressed.
+
+
